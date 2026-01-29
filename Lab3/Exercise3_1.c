@@ -1,13 +1,14 @@
+#define _POSIX_C_SOURCE 199309L
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <pthread.h>
 
 struct thread_info {
-   double exec_time;
-   int i, maxitr;
-   char op;
-   double a, b, c;
+   double exec_time; // execution time per iteration in nsec
+   int maxitr; // number of iterations to be performed
+   char op; // math operation to be performed +,-,*,/
+   double a, b, c; // a, b are factors and c is result
 };
 
 typedef struct thread_info thread_info_t;
@@ -29,20 +30,20 @@ void *func(void *arg)
    clock_gettime(CLOCK_REALTIME, &time_1);
 
    for (i = 0; i < maxitr ; i++) {
-         switch(info->op){
-	   case '+':
-		info->c = info->a + info->b;
-		break;
-	   case '-':
-		info->c = info->a - info->b;
-                break;
-	   case '*':
-		info->c = info->a * info->b;
-		break;
-	   case '/':
-		info->c = info->a / info->b;
-		break;
-	}
+      switch(info->op){
+         case '+':
+            info->c = info->a + info->b;
+            break;
+         case '-':
+            info->c = info->a - info->b;
+            break;
+         case '*':
+            info->c = info->a * info->b;
+            break;
+         case '/':
+            info->c = info->a / info->b;
+            break;
+	   }
    }
          
    clock_gettime(CLOCK_REALTIME, &time_2);
@@ -65,18 +66,18 @@ int main(void)
 
 
    for(int i = 0; i < 4; i++){ 
-   maxitr = 5.0e8;
-   info[i].maxitr = (int)maxitr;
-   info[i].op = arithmetic_op[i];
-   
-   if (pthread_create(&thread[i], NULL, &func, &info[i]) != 0) {
-           printf("Error in creating thread %d\n",i+1);
-           exit(1);
-   }
+      maxitr = 5.0e8;
+      info[i].maxitr = (int)maxitr;
+      info[i].op = arithmetic_op[i];
+      
+      if (pthread_create(&thread[i], NULL, &func, &info[i]) != 0) {
+         printf("Error in creating thread %d\n",i+1);
+         exit(1);
+      }
 
-   pthread_join(thread[i], NULL);
-   printf("Exec time for thread %d (Arithmetic Operation: %c) = %lf nsec\n",i+1, arithmetic_op[i],info[i].exec_time);
-	}
+      pthread_join(thread[i], NULL);
+      printf("Exec time for thread %d (Arithmetic Operation: %c) = %lf nsec\n",i+1, arithmetic_op[i],info[i].exec_time);
+   }
 
    pthread_exit(NULL);
 }

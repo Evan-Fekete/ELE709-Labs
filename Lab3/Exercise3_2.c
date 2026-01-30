@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 199309L
+#define _POSIX_C_SOURCE 200112L
 #include <unistd.h>
 #include <stdio.h>
 #include <time.h>
@@ -65,13 +65,9 @@ int main(void)
     char arithmetic_op[] = {'+','-','*','/'};
 
     // Create four threads to run arithmetic operations
-    for(int i = 0; i < 4; i++){ 
-        // Use malloc to allocate space for very large struct (maxitr is very large)
+    for(int i = 0; i < 4; i++){
+        // Allocate memory to which 
         info[i] = malloc(sizeof(thread_info_t));
-        if (info[i] == NULL) {
-            printf("Error allocating memory for thread %d\n", i + 1);
-            exit(1);
-        }
 
         maxitr = 5.0e8;
         info[i]->maxitr = (int)maxitr;

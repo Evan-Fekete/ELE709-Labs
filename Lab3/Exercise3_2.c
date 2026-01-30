@@ -66,7 +66,7 @@ int main(void)
 
     // Create four threads to run arithmetic operations
     for(int i = 0; i < 4; i++){ 
-        // Allocate each struct separately
+        // Use malloc to allocate space for very large struct (maxitr is very large)
         info[i] = malloc(sizeof(thread_info_t));
         if (info[i] == NULL) {
             printf("Error allocating memory for thread %d\n", i + 1);

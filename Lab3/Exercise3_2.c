@@ -66,8 +66,13 @@ int main(void)
 
     // Create four threads to run arithmetic operations
     for(int i = 0; i < 4; i++){
-        // Allocate memory to which 
+        // Allocate memory with malloc, done to store threads more efficiently
         info[i] = malloc(sizeof(thread_info_t));
+
+        if (info[i] == NULL) {
+            printf("Error allocating memory in thread %d", i+1);
+            exit(1);
+        }
 
         maxitr = 5.0e8;
         info[i]->maxitr = (int)maxitr;

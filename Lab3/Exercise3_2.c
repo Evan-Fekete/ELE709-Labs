@@ -51,10 +51,7 @@ void *func(void *arg)
 
     exec_time = (time_2.tv_sec - time_1.tv_sec)*1.0e9;
     exec_time = exec_time + (time_2.tv_nsec - time_1.tv_nsec);
-
-    // Print execution time for thread
     info->exec_time = exec_time/maxitr;
-    printf("Exec time for %c Operation Thread = %lf nsec\n", info->op,info->exec_time);
 
     pthread_exit(NULL);
     
@@ -63,29 +60,39 @@ void *func(void *arg)
 int main(void)
 {
     pthread_t thread[4];
-    thread_info_t info[4];
-    double maxitr;
+    thread_info_t *info[4];
+    int  maxitr;
     char arithmetic_op[] = {'+','-','*','/'};
 
     // Create four threads to run arithmetic operations
     for(int i = 0; i < 4; i++){ 
-        maxitr = 5.0e8;
-        info[i].maxitr = (int)maxitr;
-        info[i].op = arithmetic_op[i];
-          
-        if (pthread_create(&thread[i], NULL, &func, &info[i]) != 0) {
-            printf("Error in creating thread %d\n",i+1);
+        // Allocate each struct separately
+        info[i] = malloc(sizeof(thread_info_t));
+        if (info[i] == NULL) {
+            printf("Error allocating memory for thread %d\n", i + 1);
             exit(1);
         }
 
-        // pthread_join(thread[i], NULL);
-        // printf("Exec time for thread %d (Arithmetic Operation: %c) = %lf nsec\n",i+1, arithmetic_op[i],info[i].exec_time);
+        maxitr = 5.0e8;
+        info[i]->maxitr = (int)maxitr;
+        info[i]->op = arithmetic_op[i];
+
+        if (pthread_create(&thread[i], NULL, &func, info[i]) != 0) {
+            printf("Error in creating thread %d\n",i+1);
+            exit(1);
+        }
     }
 
     // Join threads started in for loop after completion
     for (int i = 0 ; i < 4 ; i++) {
         pthread_join(thread[i], NULL);
+        printf("Exec time for %c Operation Thread = %lf nsec\n", arithmetic_op[i], info[i]->exec_time);
     }
 
-    pthread_exit(NULL);
+    // Free allocated memory
+    for (int i = 0; i < 4; i++) {
+        free(info[i]);
+    }
+
+    return 0;
 }

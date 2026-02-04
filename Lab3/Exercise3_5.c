@@ -35,11 +35,11 @@ void *func(void *arg)
 
 void compute_C_ij(int row, int column){
 
-matrix_C[row][column] = 0;
+	matrix_C[row][column] = 0;
 
-for(int k = 0; k < 16;k++){
+	for(int k = 0; k < 16;k++){
 
-matrix_C[row][column] += matrix_A[row][k] * matrix_B[k][column];
+	matrix_C[row][column] += matrix_A[row][k] * matrix_B[k][column];
 
 }
 

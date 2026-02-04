@@ -60,23 +60,23 @@ void *func(void *arg)
 int main(void)
 {
    pthread_t thread[4];
-   thread_info_t info[4];
+   thread_info_t *info[4];
    double maxitr;
    char arithmetic_op[] = {'+','-','*','/'};
 
 
    for(int i = 0; i < 4; i++){ 
       maxitr = 5.0e8;
-      info[i].maxitr = (int)maxitr;
-      info[i].op = arithmetic_op[i];
+      info[i]->maxitr = (int)maxitr;
+      info[i]->op = arithmetic_op[i];
       
-      if (pthread_create(&thread[i], NULL, &func, &info[i]) != 0) {
+      if (pthread_create(&thread[i], NULL, &func, info[i]) != 0) {
          printf("Error in creating thread %d\n",i+1);
          exit(1);
       }
 
       pthread_join(thread[i], NULL);
-      printf("Exec time for thread %d (Arithmetic Operation: %c) = %lf nsec\n",i+1, arithmetic_op[i],info[i].exec_time);
+      printf("Exec time for thread %d (Arithmetic Operation: %c) = %lf nsec\n",i+1, arithmetic_op[i],info[i]->exec_time);
    }
 
    pthread_exit(NULL);
